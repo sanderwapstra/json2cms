@@ -1,28 +1,52 @@
-import React from "react";
-import "./App.css";
-import Dropzone from "./Dropzone";
-import logo from "./logo.svg";
+import { useEffect, useState } from 'react';
+import './App.css';
+import Dropzone from './Dropzone';
 
 function App() {
-  return (
-    <div className="App">
-      <Dropzone />
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [data, setData] = useState<JSON | undefined>(undefined);
+
+    const handleDataLoaded = (data: JSON) => {
+        setData(data);
+    };
+
+    const renderMenu = (data: JSON) => {
+        const renderMenuItem = (data: JSON) => (
+            <ul>
+                {Object.keys(data).map(key => {
+                    console.log(`key`, key);
+                    console.log(`typeof key`, typeof data[key]);
+
+                    if (typeof data[key] === 'object') {
+                        console.log('keep going');
+                        return (
+                            <>
+                                <li>{key}</li>
+                                <ul>{renderMenuItem(data[key])}</ul>
+                            </>
+                        );
+                    } else {
+                        console.log('these are the fields');
+                        return null;
+                    }
+                })}
+            </ul>
+        );
+
+        return renderMenuItem(data);
+    };
+
+    return (
+        <div className="App">
+            {!data ? (
+                <Dropzone onDataLoaded={handleDataLoaded} />
+            ) : (
+                <div>
+                    {renderMenu(data)}
+                    <div>Data loaded</div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default App;

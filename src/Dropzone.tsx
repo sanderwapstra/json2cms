@@ -1,40 +1,46 @@
-import React, { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 
-const Dropzone = () => {
-  const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.forEach((file: Blob) => {
-      const reader = new FileReader();
+type Props = {
+    onDataLoaded: (data: JSON) => void;
+};
 
-      reader.onabort = () => console.log("file reading was aborted");
-      reader.onerror = () => console.log("file reading has failed");
+const Dropzone: React.FC<Props> = ({ onDataLoaded }) => {
+    const onDrop = useCallback(acceptedFiles => {
+        acceptedFiles.forEach((file: Blob) => {
+            const reader = new FileReader();
 
-      reader.onload = () => {
-        if (reader.result) {
-          const result = JSON.parse(reader.result.toString());
+            reader.onabort = () => console.log('file reading was aborted');
+            reader.onerror = () => console.log('file reading has failed');
 
-          console.log(result);
-        }
-      };
-      reader.readAsText(file);
+            reader.onload = () => {
+                if (reader.result) {
+                    const result = JSON.parse(reader.result.toString());
+
+                    console.log(result);
+
+                    onDataLoaded(result);
+                }
+            };
+            reader.readAsText(file);
+        });
+    }, []);
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+        accept: 'application/json',
     });
-  }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: "application/json",
-  });
-
-  return (
-    <div {...getRootProps()}>
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the files here ...</p>
-      ) : (
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      )}
-    </div>
-  );
+    return (
+        <div {...getRootProps()}>
+            <input {...getInputProps()} />
+            {isDragActive ? (
+                <p>Drop the files here ...</p>
+            ) : (
+                <p>Drag 'n' drop some files here, or click to select files</p>
+            )}
+        </div>
+    );
 };
 
 export default Dropzone;
