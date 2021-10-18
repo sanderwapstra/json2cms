@@ -1,0 +1,137 @@
+@font-face {
+    font-family: 'RandoRegular';
+    font-display: swap;
+    src: url('../fonts/Rando-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'RandoSemiBold';
+    font-display: swap;
+    src: url('../fonts/Rando-SemiBold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'GraphikRegular';
+    font-display: swap;
+    src: url('../fonts/Graphik-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'GraphikSemiBold';
+    font-display: swap;
+    src: url('../fonts/Graphik-Semibold.woff') format('woff');
+}
+
+body {
+    font-family: 'GraphikRegular', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding-bottom: 140px;
+}
+
+.header {
+    text-align: center;
+    padding: 50px 0 60px;
+}
+
+h1 {
+    font-family: 'RandoSemiBold', serif;
+    font-size: 54px;
+    margin: 0;
+}
+
+.container {
+    margin: 0 30px;
+}
+
+.dropzone {
+    background-color: #fff;
+    border: 1px dashed #ccc;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 50px 30px;
+    text-align: center;
+}
+
+.App {
+}
+
+.download {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    font-family: 'GraphikSemiBold', sans-serif;
+    background-color: #ffca32;
+    border: 0;
+    padding: 8px 12px 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.download:hover {
+    background-color: #1a1717;
+    color: #fff;
+}
+
+.downloadIcon {
+    width: 24px;
+    height: 24px;
+    margin-left: 4px;
+    fill: currentColor;
+}
+
+/* Accordion styles */
+.App .accordion__container {
+    background-color: #fff;
+    padding: 30px;
+}
+
+.App .accordion {
+    border: 0;
+    border-radius: 0;
+}
+
+.App .accordion__button {
+    background-color: transparent;
+    color: #1a1717;
+    padding: 12px 0;
+}
+
+.App .accordion__button::before {
+    margin-right: 16px;
+}
+
+.App .accordion__button:hover {
+    color: #f05a3c;
+    background-color: transparent;
+}
+
+.App .accordion__panel {
+    margin-left: 5px;
+    padding: 0 0 0 24px;
+    border-left: 1px dashed #ccc;
+}
+
+.formRow {
+    margin-bottom: 20px;
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 4px;
+    font-family: 'GraphikSemiBold';
+}
+
+.formControl {
+    font-family: 'GraphikRegular';
+    border: 1px solid #ccc;
+    border-radius: 0;
+    padding: 12px 16px;
+    min-width: 480px;
+}

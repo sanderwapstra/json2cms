@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { ReactComponent as JsonIcon } from './assets/svg/json.svg';
 
 type Props = {
     onDataLoaded: (fileName: string, data: Record<string, any>) => void;
@@ -37,12 +38,15 @@ const Dropzone: React.FC<Props> = ({ onDataLoaded }) => {
     });
 
     return (
-        <div {...getRootProps()}>
+        <div className="dropzone" {...getRootProps()}>
             <input {...getInputProps()} />
+
+            <JsonIcon />
+
             {isDragActive ? (
-                <p>Drop the files here ...</p>
+                <p>Drop the file here ...</p>
             ) : (
-                <p>Drag 'n' drop some files here, or click to select files</p>
+                <p>Drag 'n' drop a JSON file here, or click to select files</p>
             )}
         </div>
     );

@@ -8,11 +8,12 @@ import {
 } from 'react-accessible-accordion';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import { useImmer } from 'use-immer';
-import './App.css';
+import './assets/css/App.css';
 import Dropzone from './Dropzone';
 import _ from 'lodash';
 import { exportToJsonFile } from './utils/exportToJsonFile';
 import dayjs from 'dayjs';
+import { ReactComponent as DownloadIcon } from './assets/svg/download.svg';
 
 function App() {
     const [fileName, setFileName] = useState<string | undefined>(undefined);
@@ -35,16 +36,6 @@ function App() {
         },
         [setData]
     );
-
-    const renderInput = (key: string, value: string) => {
-        return (
-            <input
-                type="text"
-                value={value}
-                onChange={e => handleChange(key, e.target.value)}
-            />
-        );
-    };
 
     const handleDownload = () => {
         if (data) {
@@ -82,8 +73,8 @@ function App() {
                     );
                 } else {
                     return (
-                        <div key={index}>
-                            <label>{key}</label>
+                        <div key={index} className="formRow">
+                            <label className="formLabel">{key}</label>
                             {renderInput(
                                 tree ? `${tree}.${key}` : key,
                                 data[key]
@@ -96,20 +87,36 @@ function App() {
         return renderMenuItem(data, '');
     };
 
+    const renderInput = (key: string, value: string) => {
+        return (
+            <input
+                className="formControl"
+                type="text"
+                value={value}
+                onChange={e => handleChange(key, e.target.value)}
+            />
+        );
+    };
+
     return (
         <div className="App">
-            {!data ? (
-                <>
-                    <Dropzone onDataLoaded={handleDataLoaded} />
-                </>
-            ) : (
-                <div>
-                    {renderMenu(data)}
-                    <button className="download" onClick={handleDownload}>
-                        Download
-                    </button>
-                </div>
-            )}
+            <div className="header">
+                <h1>json2cms</h1>
+            </div>
+            <div className="container">
+                {!data ? (
+                    <>
+                        <Dropzone onDataLoaded={handleDataLoaded} />
+                    </>
+                ) : (
+                    <div className="accordion__container">
+                        {renderMenu(data)}
+                        <button className="download" onClick={handleDownload}>
+                            Download <DownloadIcon className="downloadIcon" />
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
