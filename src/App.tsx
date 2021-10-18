@@ -1,48 +1,113 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemButton,
+    AccordionItemHeading,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
+import 'react-accessible-accordion/dist/fancy-example.css';
+import { useImmer } from 'use-immer';
 import './App.css';
 import Dropzone from './Dropzone';
+import _ from 'lodash';
+import { exportToJsonFile } from './utils/exportToJsonFile';
+import dayjs from 'dayjs';
 
 function App() {
-    const [data, setData] = useState<JSON | undefined>(undefined);
+    const [fileName, setFileName] = useState<string | undefined>(undefined);
+    const [data, setData] = useImmer<Record<string, any> | undefined>(
+        undefined
+    );
 
-    const handleDataLoaded = (data: JSON) => {
+    const handleDataLoaded = (fileName: string, data: Record<string, any>) => {
+        setFileName(fileName);
         setData(data);
     };
 
-    const renderMenu = (data: JSON) => {
-        const renderMenuItem = (data: JSON) => (
-            <ul>
-                {Object.keys(data).map(key => {
-                    console.log(`key`, key);
-                    console.log(`typeof key`, typeof data[key]);
+    const handleChange = useCallback(
+        (key: string, value: string) => {
+            setData(draft => {
+                if (draft) {
+                    _.set(draft, key, value);
+                }
+            });
+        },
+        [setData]
+    );
 
-                    if (typeof data[key] === 'object') {
-                        console.log('keep going');
-                        return (
-                            <>
-                                <li>{key}</li>
-                                <ul>{renderMenuItem(data[key])}</ul>
-                            </>
-                        );
-                    } else {
-                        console.log('these are the fields');
-                        return null;
-                    }
-                })}
-            </ul>
+    const renderInput = (key: string, value: string) => {
+        return (
+            <input
+                type="text"
+                value={value}
+                onChange={e => handleChange(key, e.target.value)}
+            />
         );
+    };
 
-        return renderMenuItem(data);
+    const handleDownload = () => {
+        if (data) {
+            exportToJsonFile(
+                `${dayjs().format('YYYY-MM-DD')}_${fileName}`,
+                data
+            );
+        }
+    };
+
+    const renderMenu = (data: Record<string, any>) => {
+        const renderMenuItem = (data: Record<string, any>, tree: string) =>
+            Object.keys(data).map((key, index) => {
+                if (typeof data[key] !== 'string') {
+                    return (
+                        <Accordion
+                            key={index}
+                            allowMultipleExpanded
+                            allowZeroExpanded
+                        >
+                            <AccordionItem>
+                                <AccordionItemHeading>
+                                    <AccordionItemButton>
+                                        {key}
+                                    </AccordionItemButton>
+                                </AccordionItemHeading>
+                                <AccordionItemPanel>
+                                    {renderMenuItem(
+                                        data[key],
+                                        tree ? `${tree}.${key}` : key
+                                    )}
+                                </AccordionItemPanel>
+                            </AccordionItem>
+                        </Accordion>
+                    );
+                } else {
+                    return (
+                        <div key={index}>
+                            <label>{key}</label>
+                            {renderInput(
+                                tree ? `${tree}.${key}` : key,
+                                data[key]
+                            )}
+                        </div>
+                    );
+                }
+            });
+
+        return renderMenuItem(data, '');
     };
 
     return (
         <div className="App">
             {!data ? (
-                <Dropzone onDataLoaded={handleDataLoaded} />
+                <>
+                    <Dropzone onDataLoaded={handleDataLoaded} />
+                </>
             ) : (
                 <div>
                     {renderMenu(data)}
-                    <div>Data loaded</div>
+                    <button className="download" onClick={handleDownload}>
+                        Download
+                    </button>
                 </div>
             )}
         </div>

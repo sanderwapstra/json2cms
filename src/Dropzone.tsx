@@ -2,29 +2,34 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 type Props = {
-    onDataLoaded: (data: JSON) => void;
+    onDataLoaded: (fileName: string, data: Record<string, any>) => void;
 };
 
 const Dropzone: React.FC<Props> = ({ onDataLoaded }) => {
-    const onDrop = useCallback(acceptedFiles => {
-        acceptedFiles.forEach((file: Blob) => {
-            const reader = new FileReader();
+    const onDrop = useCallback(
+        acceptedFiles => {
+            acceptedFiles.forEach((file: any) => {
+                console.log(`file`, file);
+                const reader = new FileReader();
 
-            reader.onabort = () => console.log('file reading was aborted');
-            reader.onerror = () => console.log('file reading has failed');
+                reader.onabort = () => console.log('file reading was aborted');
+                reader.onerror = () => console.log('file reading has failed');
 
-            reader.onload = () => {
-                if (reader.result) {
-                    const result = JSON.parse(reader.result.toString());
+                reader.onload = () => {
+                    if (reader.result) {
+                        const result = JSON.parse(reader.result.toString());
 
-                    console.log(result);
-
-                    onDataLoaded(result);
-                }
-            };
-            reader.readAsText(file);
-        });
-    }, []);
+                        onDataLoaded(
+                            file.path.replace(/\.[^/.]+$/, ''),
+                            result
+                        );
+                    }
+                };
+                reader.readAsText(file);
+            });
+        },
+        [onDataLoaded]
+    );
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
